@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0B0D12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>KAIZEN • BUSHIDO — Daily Mastery Tracker</title>
+  <style>
+    :root {
+      --bg-primary: #0B0D12;
+      --bg-secondary: #121620;
+      --bg-card: #171C28;
+      --bg-elevated: #1E2536;
+      --border-subtle: rgba(212, 175, 55, 0.16);
+      --border-strong: rgba(212, 175, 55, 0.38);
+      --gold: #D4AF37;
+      --gold-light: #F3D574;
+      --crimson: #C81E32;
+      --crimson-glow: rgba(200, 30, 50, 0.25);
+      --blue-accent: #3B82F6;
+      --text-primary: #F4F5F7;
+      --text-secondary: #9CA3AF;
+      --text-muted: #6B7280;
+      --success: #10B981;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding-bottom: 92px;
+      background-image:
+        radial-gradient(circle at 100% 0%, rgba(200, 30, 50, 0.08), transparent 40%),
+        radial-gradient(circle at 0% 100%, rgba(212, 175, 55, 0.06), transparent 40%),
+        repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.012) 0px, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 24px),
+        repeating-linear-gradient(-60deg, rgba(255, 255, 255, 0.012) 0px, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 24px);
+    }
+
+    .app-shell {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 18px 16px 24px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-kanji {
+      font-size: 0.85rem;
+      padding: 2px 6px;
+      border: 1px solid var(--crimson);
+      color: var(--text-primary);
+      border-radius: 4px;
+      background: var(--crimson-glow);
+      letter-spacing: 0.05em;
+    }
+
+    .brand-sub {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+    }
+
+    .date-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      text-align: right;
+    }
+
+    /* Hero Ring & Summary */
+    .hero-card {
+      background: linear-gradient(145deg, var(--bg-card), var(--bg-secondary));
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    .ring-wrap {
+      position: relative;
+      width: 84px;
+      height: 84px;
+      flex-shrink: 0;
+    }
+
+    .ring-wrap svg {
+      transform: rotate(-90deg);
+      width: 84px;
+      height: 84px;
+    }
+
+    .ring-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.08);
+      stroke-width: 7;
+    }
+
+    .ring-progress {
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-dasharray: 226;
+      stroke-dashoffset: 226;
+      transition: stroke-dashoffset 0.45s ease;
+    }
+
+    .ring-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ring-pct {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .ring-sub {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+    }
+
+    .hero-stats {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quote-text {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--text-secondary);
+      line-height: 1.35;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .mini-stat {
+      flex: 1;
+      background: rgba(11, 13, 18, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+    }
+
+    .mini-stat-val {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .mini-stat-lbl {
+      font-size: 0.66rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Section Controls */
+    .section-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, var(--gold), #B69121);
+      color: #0B0D12;
+      border: none;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.25);
+    }
+
+    .btn-add:active {
+      transform: scale(0.97);
+    }
+
+    /* Filter Chips */
+    .filter-row {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 8px;
+      scrollbar-width: none;
+    }
+
+    .filter-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: rgba(212, 175, 55, 0.16);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    /* Habit & Task Cards */
+    .habit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .habit-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .habit-card.completed {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: rgba(23, 28, 40, 0.65);
+    }
+
+    .check-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 2px solid var(--gold);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      color: #0B0D12;
+      font-weight: 900;
+      font-size: 0.95rem;
+      margin-top: 2px;
+      transition: all 0.18s ease;
+    }
+
+    .habit-card.completed .check-btn {
+      background: var(--success);
+      border-color: var(--success);
+      color: #061811;
+    }
+
+    .habit-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .habit-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .habit-card.completed .habit-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .habit-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .tag-cat {
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--gold-light);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .tag-priority-high {
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--crimson-glow);
+      border: 1px solid rgba(200, 30, 50, 0.4);
+      color: #FCA5A5;
+      font-weight: 700;
+    }
+
+    .streak-badge {
+      color: #F59E0B;
+      font-weight: 700;
+    }
+
+    .link-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .ext-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-decoration: none;
+      background: rgba(59, 130, 246, 0.14);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #93C5FD;
+      transition: background 0.15s ease;
+    }
+
+    .ext-link-btn.maps {
+      background: rgba(16, 185, 129, 0.14);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #6EE7B7;
+    }
+
+    .ext-link-btn:active {
+      opacity: 0.8;
+    }
+
+    .habit-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      color: var(--text-secondary);
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Quick Launcher Banner for Calendar & Maps */
+    .quick-hub {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .hub-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: border-color 0.2s ease;
+    }
+
+    .hub-btn:hover {
+      border-color: var(--gold);
+    }
+
+    .hub-icon {
+      font-size: 1.3rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(212, 175, 55, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .hub-text-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .hub-text-sub {
+      font-size: 0.67rem;
+      color: var(--text-secondary);
+    }
+
+    /* Tab Views */
+    .view-panel {
+      display: none;
+    }
+
+    .view-panel.active {
+      display: block;
+    }
+
+    /* Timer View */
+    .timer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 24px 18px;
+      text-align: center;
+    }
+
+    .timer-presets {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .timer-display {
+      font-size: 3.4rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.05em;
+      color: var(--gold-light);
+      margin: 14px 0 22px;
+      text-shadow: 0 0 24px rgba(212, 175, 55, 0.25);
+    }
+
+    .timer-controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      background: var(--crimson);
+      color: #fff;
+      border: none;
+      padding: 11px 24px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      box-shadow: 0 6px 18px var(--crimson-glow);
+    }
+
+    .btn-secondary {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 11px 20px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    /* Stats & Backup View */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+
+    .stat-box-num {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .stat-box-label {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .heatmap-card, .backup-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .heat-cell {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+    }
+
+    .heat-cell.lvl-1 { background: rgba(212, 175, 55, 0.22); color: var(--text-primary); }
+    .heat-cell.lvl-2 { background: rgba(212, 175, 55, 0.48); color: var(--text-primary); }
+    .heat-cell.lvl-3 { background: rgba(212, 175, 55, 0.85); color: #0B0D12; font-weight: 700; }
+    .heat-cell.today { border-color: var(--crimson); }
+
+    .backup-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(18, 22, 32, 0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-around;
+      padding: 9px 4px calc(9px + env(safe-area-inset-bottom));
+      z-index: 50;
+    }
+
+    .nav-item {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 10px;
+    }
+
+    .nav-item.active {
+      color: var(--gold);
+    }
+
+    .nav-icon {
+      font-size: 1.12rem;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 430px;
+      padding: 20px;
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 11px;
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: var(--radius-sm);
+      padding: 9px 11px;
+      color: var(--text-primary);
+      font-size: 0.88rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="brand">
+        <div class="brand-title">KAIZEN • BUSHIDO <span class="brand-kanji">改善</span></div>
+        <div class="brand-sub">1% Daily Discipline &amp; Personal Mastery</div>
+      </div>
+      <div class="date-pill" id="todayLabel">Today</div>
+    </header>
+
+    <!-- DIRECTIVES (HABITS) VIEW -->
+    <section id="view-today" class="view-panel active">
+      <div class="hero-card">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 84 84">
+            <circle class="ring-bg" cx="42" cy="42" r="36"></circle>
+            <circle class="ring-progress" id="progressRing" cx="42" cy="42" r="36"></circle>
+          </svg>
+          <div class="ring-label">
+            <span class="ring-pct" id="ringPct">0%</span>
+            <span class="ring-sub">Mastery</span>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="quote-text" id="dailyQuote">"Fall seven times, stand up eight." — Bushido Proverb</div>
+          <div class="stat-row">
+            <div class="mini-stat">
+              <div class="mini-stat-val" id="completedCount">0 / 0</div>
+              <div class="mini-stat-lbl">Completed</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-val" id="bestStreakHero">0d</div>
+              <div class="mini-stat-lbl">Top Streak</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-bar">
+        <span class="section-title">Daily Directives</span>
+        <button class="btn-add" id="openAddModalBtn">+ New Habit</button>
+      </div>
+
+      <div class="filter-row" id="categoryFilters">
+        <button class="chip active" data-cat="All">All</button>
+        <button class="chip" data-cat="Body">Body &amp; OMAD</button>
+        <button class="chip" data-cat="Mind">Mind &amp; Nihongo</button>
+        <button class="chip" data-cat="Wealth">Wealth &amp; Craft</button>
+        <button class="chip" data-cat="Spirit">Bushido Spirit</button>
+      </div>
+
+      <div class="habit-list" id="habitList"></div>
+    </section>
+
+    <!-- TO-DO & SCHEDULING VIEW -->
+    <section id="view-tasks" class="view-panel">
+      <div class="quick-hub">
+        <a class="hub-btn" href="https://calendar.google.com/calendar/r" target="_blank" rel="noopener">
+          <div class="hub-icon">📅</div>
+          <div>
+            <div class="hub-text-title">Google Calendar</div>
+            <div class="hub-text-sub">Open Full Schedule</div>
+          </div>
+        </a>
+        <a class="hub-btn" href="https://www.google.com/maps" target="_blank" rel="noopener">
+          <div class="hub-icon">📍</div>
+          <div>
+            <div class="hub-text-title">Google Maps</div>
+            <div class="hub-text-sub">Plan Route &amp; Places</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="section-bar">
+        <span class="section-title">Action To-Do &amp; Schedule</span>
+        <button class="btn-add" id="openAddTaskBtn">+ New Task</button>
+      </div>
+
+      <div class="filter-row" id="taskFilters">
+        <button class="chip active" data-tfilter="pending">Active</button>
+        <button class="chip" data-tfilter="completed">Completed</button>
+        <button class="chip" data-tfilter="all">All Tasks</button>
+      </div>
+
+      <div class="habit-list" id="taskList"></div>
+    </section>
+
+    <!-- FOCUS TIMER VIEW -->
+    <section id="view-focus" class="view-panel">
+      <div class="timer-card">
+        <div class="section-title" style="margin-bottom: 12px;">Deep Focus Dojo Timer</div>
+        <div class="timer-presets">
+          <button class="chip active preset-btn" data-mins="25">25m Kaizen</button>
+          <button class="chip preset-btn" data-mins="45">45m Deep Work</button>
+          <button class="chip preset-btn" data-mins="60">60m Training</button>
+        </div>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-controls">
+          <button class="btn-primary" id="timerStartBtn">Start Session</button>
+          <button class="btn-secondary" id="timerResetBtn">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- KAIZEN STATS VIEW -->
+    <section id="view-stats" class="view-panel">
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-box-num" id="statTotalChecks">0</div>
+          <div class="stat-box-label">Total Check-Ins</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num" id="statPerfectDays">0</div>
+          <div class="stat-box-label">100% Mastery Days</div>
+        </div>
+      </div>
+
+      <div class="heatmap-card">
+        <div class="section-title">28-Day Discipline Heatmap</div>
+        <div class="heatmap-grid" id="heatmapGrid"></div>
+      </div>
+
+      <div class="backup-card">
+        <div class="section-title">Offline Data &amp; Backup</div>
+        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 6px; line-height: 1.4;">
+          All streaks, habits, and scheduled to-dos are stored locally on your phone. Export a JSON backup anytime to safeguard your records.
+        </p>
+        <div class="backup-actions">
+          <button class="btn-secondary" id="exportJsonBtn">Export JSON</button>
+          <label class="btn-secondary" style="cursor:pointer;">
+            Import JSON
+            <input type="file" id="importJsonInput" accept=".json" style="display:none;" />
+          </label>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-view="view-today">
+      <span class="nav-icon">⚔️</span>
+      <span>Directives</span>
+    </button>
+    <button class="nav-item" data-view="view-tasks">
+      <span class="nav-icon">📋</span>
+      <span>To-Do &amp; Sync</span>
+    </button>
+    <button class="nav-item" data-view="view-focus">
+      <span class="nav-icon">⏳</span>
+      <span>Focus Dojo</span>
+    </button>
+    <button class="nav-item" data-view="view-stats">
+      <span class="nav-icon">📊</span>
+      <span>Kaizen Stats</span>
+    </button>
+  </nav>
+
+  <!-- Add / Edit Habit Modal -->
+  <div class="modal-backdrop" id="habitModal">
+    <div class="modal-box">
+      <div class="modal-title" id="modalHeading">Add Daily Directive</div>
+      <input type="hidden" id="editHabitId" />
+      <div class="form-group">
+        <label class="form-label" for="habitTitleInput">Habit Title</label>
+        <input type="text" id="habitTitleInput" class="form-input" placeholder="e.g., 1-Hour Kettlebell & Dumbbell Conditioning" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="habitCategoryInput">Pillar / Category</label>
+        <select id="habitCategoryInput" class="form-select">
+          <option value="Body">Body &amp; OMAD</option>
+          <option value="Mind">Mind &amp; Nihongo</option>
+          <option value="Wealth">Wealth &amp; Craft</option>
+          <option value="Spirit">Bushido Spirit</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="habitTimeInput">Target Window</label>
+        <input type="text" id="habitTimeInput" class="form-input" placeholder="e.g., 05:00 AM • 60 mins" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="closeModalBtn">Cancel</button>
+        <button class="btn-add" id="saveHabitBtn">Save Directive</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / Edit To-Do Task Modal -->
+  <div class="modal-backdrop" id="taskModal">
+    <div class="modal-box">
+      <div class="modal-title" id="taskModalHeading">Add Scheduled To-Do</div>
+      <input type="hidden" id="editTaskId" />
+      <div class="form-group">
+        <label class="form-label" for="taskTitleInput">Task / Appointment Title</label>
+        <input type="text" id="taskTitleInput" class="form-input" placeholder="e.g., MG 5 PMS Service or Property Viewing" />
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label" for="taskDateInput">Target Date</label>
+          <input type="date" id="taskDateInput" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="taskTimeInput">Start Time</label>
+          <input type="time" id="taskTimeInput" class="form-input" />
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label" for="taskDurationInput">Duration (mins)</label>
+          <input type="number" id="taskDurationInput" class="form-input" value="60" min="15" step="15" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="taskPriorityInput">Priority</label>
+          <select id="taskPriorityInput" class="form-select">
+            <option value="Normal">Normal</option>
+            <option value="High">High Priority</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="taskLocationInput">Location / Google Maps Query</label>
+        <input type="text" id="taskLocationInput" class="form-input" placeholder="e.g., MG Congressional, Quezon City" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="taskNotesInput">Notes / Details (Synced to Calendar)</label>
+        <input type="text" id="taskNotesInput" class="form-input" placeholder="Optional agenda or checklist notes" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="closeTaskModalBtn">Cancel</button>
+        <button class="btn-add" id="saveTaskBtn">Save To-Do</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "kaizen_bushido_tracker_v2";
+
+    const DEFAULT_HABITS = [
+      { id: "h1", title: "Sovereign Morning Wake-Up & Hydration", category: "Spirit", time: "05:00 AM" },
+      { id: "h2", title: "1-Hour Strength & Conditioning (Dumbbells/Kettlebells)", category: "Body", time: "05:30 AM" },
+      { id: "h3", title: "OMAD Clean Nutrition Protocol", category: "Body", time: "Daily Window" },
+      { id: "h4", title: "Japanese Language Fluency Study (Anki + Immersion)", category: "Mind", time: "30–45 mins" },
+      { id: "h5", title: "WealthFlowCM Asset & Digital Product Creation", category: "Wealth", time: "Evening Block" },
+      { id: "h6", title: "Evening Kaizen Review & Next-Day Preparation", category: "Spirit", time: "09:30 PM" }
+    ];
+
+    const DEFAULT_TASKS = [
+      {
+        id: "t1",
+        title: "Weekly WealthFlowCM Content & Digital Asset Batching",
+        date: getDateKey(),
+        time: "19:00",
+        duration: 60,
+        priority: "High",
+        location: "Quezon City, Metro Manila",
+        notes: "Script, voiceover, and Canva workbook review.",
+        done: false
+      }
+    ];
+
+    const QUOTES = [
+      '"Fall seven times, stand up eight." — Bushido Proverb',
+      '"Today's victory over yourself of yesterday is tomorrow's victory over lesser men." — Miyamoto Musashi',
+      '"Continuous improvement is better than delayed perfection." — Kaizen Principle',
+      '"Discipline is the bridge between goals and accomplishment."'
+    ];
+
+    function getDateKey(dateObj = new Date()) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const d = String(dateObj.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("kaizen_bushido_tracker_v1");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.habits) && typeof parsed.logs === "object") {
+            return {
+              habits: parsed.habits,
+              logs: parsed.logs,
+              tasks: Array.isArray(parsed.tasks) ? parsed.tasks : DEFAULT_TASKS
+            };
+          }
+        }
+      } catch (e) {}
+      return { habits: DEFAULT_HABITS, logs: {}, tasks: DEFAULT_TASKS };
+    }
+
+    let state = loadState();
+    let activeFilter = "All";
+    let activeTaskFilter = "pending";
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    /* ---------- GOOGLE CALENDAR & MAPS URL BUILDERS ---------- */
+    function buildGoogleCalendarUrl(task) {
+      const base = "https://calendar.google.com/calendar/render?action=TEMPLATE";
+      const text = encodeURIComponent(task.title || "Scheduled Task");
+      const details = encodeURIComponent(task.notes || "Created from KAIZEN • BUSHIDO Tracker");
+      const location = task.location ? `&location=${encodeURIComponent(task.location)}` : "";
+
+      let datesParam = "";
+      if (task.date) {
+        const cleanDate = task.date.replace(/-/g, "");
+        if (task.time) {
+          const [hh, mm] = task.time.split(":").map(Number);
+          const start = new Date(task.date + "T" + task.time + ":00");
+          const durMins = parseInt(task.duration, 10) || 60;
+          const end = new Date(start.getTime() + durMins * 60000);
+
+          const fmt = (d) =>
+            `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}T${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}00`;
+          datesParam = `&dates=${fmt(start)}/${fmt(end)}`;
+        } else {
+          const nextDay = new Date(task.date + "T00:00:00");
+          nextDay.setDate(nextDay.getDate() + 1);
+          const nextStr = getDateKey(nextDay).replace(/-/g, "");
+          datesParam = `&dates=${cleanDate}/${nextStr}`;
+        }
+      }
+
+      return `${base}&text=${text}${datesParam}&details=${details}${location}`;
+    }
+
+    function buildGoogleMapsUrl(locationQuery) {
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}`;
+    }
+
+    /* ---------- HABITS RENDERING ---------- */
+    function calcHabitStreak(habitId) {
+      let streak = 0;
+      const cursor = new Date();
+      const todayKey = getDateKey(cursor);
+      if (!(state.logs[todayKey] && state.logs[todayKey].includes(habitId))) {
+        cursor.setDate(cursor.getDate() - 1);
+      }
+      while (true) {
+        const key = getDateKey(cursor);
+        if (state.logs[key] && state.logs[key].includes(habitId)) {
+          streak++;
+          cursor.setDate(cursor.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    function renderAll() {
+      const today = new Date();
+      const todayKey = getDateKey(today);
+      document.getElementById("todayLabel").textContent = today.toLocaleDateString(undefined, {
+        weekday: "short", month: "short", day: "numeric"
+      });
+
+      const dayIndex = today.getDate() % QUOTES.length;
+      document.getElementById("dailyQuote").textContent = QUOTES[dayIndex];
+
+      const completedToday = state.logs[todayKey] || [];
+      const total = state.habits.length;
+      const done = state.habits.filter(h => completedToday.includes(h.id)).length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+      document.getElementById("ringPct").textContent = `${pct}%`;
+      document.getElementById("completedCount").textContent = `${done} / ${total}`;
+      const ring = document.getElementById("progressRing");
+      const circumference = 226;
+      ring.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+
+      let topStreak = 0;
+      state.habits.forEach(h => {
+        const s = calcHabitStreak(h.id);
+        if (s > topStreak) topStreak = s;
+      });
+      document.getElementById("bestStreakHero").textContent = `${topStreak}d`;
+
+      const listEl = document.getElementById("habitList");
+      listEl.innerHTML = "";
+      const visible = activeFilter === "All"
+        ? state.habits
+        : state.habits.filter(h => h.category === activeFilter);
+
+      visible.forEach(habit => {
+        const isDone = completedToday.includes(habit.id);
+        const streak = calcHabitStreak(habit.id);
+        const card = document.createElement("div");
+        card.className = `habit-card ${isDone ? "completed" : ""}`;
+        card.innerHTML = `
+          <button class="check-btn" aria-label="Toggle habit">${isDone ? "✓" : ""}</button>
+          <div class="habit-info">
+            <div class="habit-title">${escapeHtml(habit.title)}</div>
+            <div class="habit-meta">
+              <span class="tag-cat">${escapeHtml(habit.category)}</span>
+              <span>${escapeHtml(habit.time || "Daily")}</span>
+              <span class="streak-badge">🔥 ${streak}d</span>
+            </div>
+          </div>
+          <div class="habit-actions">
+            <button class="icon-btn edit-btn" title="Edit">✎</button>
+            <button class="icon-btn del-btn" title="Delete">✕</button>
+          </div>
+        `;
+
+        card.querySelector(".check-btn").addEventListener("click", () => toggleHabit(habit.id));
+        card.querySelector(".edit-btn").addEventListener("click", () => openEditModal(habit));
+        card.querySelector(".del-btn").addEventListener("click", () => deleteHabit(habit.id));
+        listEl.appendChild(card);
+      });
+
+      renderTasks();
+      renderStats();
+    }
+
+    function toggleHabit(habitId) {
+      const todayKey = getDateKey();
+      if (!state.logs[todayKey]) state.logs[todayKey] = [];
+      const idx = state.logs[todayKey].indexOf(habitId);
+      if (idx === -1) {
+        state.logs[todayKey].push(habitId);
+      } else {
+        state.logs[todayKey].splice(idx, 1);
+      }
+      saveState();
+      renderAll();
+    }
+
+    function deleteHabit(habitId) {
+      state.habits = state.habits.filter(h => h.id !== habitId);
+      saveState();
+      renderAll();
+    }
+
+    /* ---------- TO-DO & GOOGLE CALENDAR / MAPS RENDERING ---------- */
+    function renderTasks() {
+      const taskListEl = document.getElementById("taskList");
+      taskListEl.innerHTML = "";
+
+      let filtered = state.tasks;
+      if (activeTaskFilter === "pending") {
+        filtered = state.tasks.filter(t => !t.done);
+      } else if (activeTaskFilter === "completed") {
+        filtered = state.tasks.filter(t => t.done);
+      }
+
+      if (filtered.length === 0) {
+        taskListEl.innerHTML = `<div class="empty-state">No tasks in this view. Tap <strong>+ New Task</strong> to schedule an action item with Google Calendar &amp; Maps links.</div>`;
+        return;
+      }
+
+      filtered.forEach(task => {
+        const calUrl = buildGoogleCalendarUrl(task);
+        const mapsUrl = task.location ? buildGoogleMapsUrl(task.location) : "";
+
+        const card = document.createElement("div");
+        card.className = `habit-card ${task.done ? "completed" : ""}`;
+        card.innerHTML = `
+          <button class="check-btn" aria-label="Toggle task">${task.done ? "✓" : ""}</button>
+          <div class="habit-info">
+            <div class="habit-title">${escapeHtml(task.title)}</div>
+            <div class="habit-meta">
+              ${task.priority === "High" ? '<span class="tag-priority-high">HIGH</span>' : ''}
+              ${task.date ? `<span class="tag-cat">📆 ${escapeHtml(task.date)}${task.time ? " • " + escapeHtml(task.time) : ""}</span>` : ''}
+              ${task.location ? `<span>📍 ${escapeHtml(task.location)}</span>` : ''}
+            </div>
+            ${task.notes ? `<div style="font-size:0.74rem;color:var(--text-secondary);margin-top:4px;">${escapeHtml(task.notes)}</div>` : ''}
+            <div class="link-pills">
+              <a class="ext-link-btn" href="${calUrl}" target="_blank" rel="noopener">📅 Add to Google Calendar</a>
+              ${mapsUrl ? `<a class="ext-link-btn maps" href="${mapsUrl}" target="_blank" rel="noopener">🗺️ Open in Google Maps</a>` : ''}
+            </div>
+          </div>
+          <div class="habit-actions">
+            <button class="icon-btn edit-task-btn" title="Edit Task">✎</button>
+            <button class="icon-btn del-task-btn" title="Delete Task">✕</button>
+          </div>
+        `;
+
+        card.querySelector(".check-btn").addEventListener("click", () => {
+          task.done = !task.done;
+          saveState();
+          renderTasks();
+        });
+        card.querySelector(".edit-task-btn").addEventListener("click", () => openEditTaskModal(task));
+        card.querySelector(".del-task-btn").addEventListener("click", () => {
+          state.tasks = state.tasks.filter(t => t.id !== task.id);
+          saveState();
+          renderTasks();
+        });
+
+        taskListEl.appendChild(card);
+      });
+    }
+
+    function renderStats() {
+      let totalChecks = 0;
+      let perfectDays = 0;
+      const habitCount = state.habits.length;
+
+      Object.values(state.logs).forEach(arr => {
+        totalChecks += arr.length;
+        if (habitCount > 0 && arr.length >= habitCount) perfectDays++;
+      });
+
+      document.getElementById("statTotalChecks").textContent = totalChecks;
+      document.getElementById("statPerfectDays").textContent = perfectDays;
+
+      const grid = document.getElementById("heatmapGrid");
+      grid.innerHTML = "";
+      const todayKey = getDateKey();
+
+      for (let i = 27; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const key = getDateKey(d);
+        const count = (state.logs[key] || []).length;
+        const ratio = habitCount > 0 ? count / habitCount : 0;
+
+        let lvl = "";
+        if (ratio > 0 && ratio < 0.5) lvl = "lvl-1";
+        else if (ratio >= 0.5 && ratio < 1) lvl = "lvl-2";
+        else if (ratio >= 1) lvl = "lvl-3";
+
+        const cell = document.createElement("div");
+        cell.className = `heat-cell ${lvl} ${key === todayKey ? "today" : ""}`;
+        cell.textContent = d.getDate();
+        cell.title = `${key}: ${count}/${habitCount}`;
+        grid.appendChild(cell);
+      }
+    }
+
+    /* ---------- HABIT MODAL HANDLERS ---------- */
+    const modal = document.getElementById("habitModal");
+    document.getElementById("openAddModalBtn").addEventListener("click", () => {
+      document.getElementById("modalHeading").textContent = "Add Daily Directive";
+      document.getElementById("editHabitId").value = "";
+      document.getElementById("habitTitleInput").value = "";
+      document.getElementById("habitCategoryInput").value = "Body";
+      document.getElementById("habitTimeInput").value = "";
+      modal.classList.add("open");
+    });
+
+    function openEditModal(habit) {
+      document.getElementById("modalHeading").textContent = "Edit Daily Directive";
+      document.getElementById("editHabitId").value = habit.id;
+      document.getElementById("habitTitleInput").value = habit.title;
+      document.getElementById("habitCategoryInput").value = habit.category;
+      document.getElementById("habitTimeInput").value = habit.time || "";
+      modal.classList.add("open");
+    }
+
+    document.getElementById("closeModalBtn").addEventListener("click", () => {
+      modal.classList.remove("open");
+    });
+
+    document.getElementById("saveHabitBtn").addEventListener("click", () => {
+      const title = document.getElementById("habitTitleInput").value.trim();
+      if (!title) return;
+      const category = document.getElementById("habitCategoryInput").value;
+      const time = document.getElementById("habitTimeInput").value.trim() || "Daily";
+      const editId = document.getElementById("editHabitId").value;
+
+      if (editId) {
+        const target = state.habits.find(h => h.id === editId);
+        if (target) {
+          target.title = title;
+          target.category = category;
+          target.time = time;
+        }
+      } else {
+        state.habits.push({
+          id: "h_" + Date.now(),
+          title,
+          category,
+          time
+        });
+      }
+      saveState();
+      modal.classList.remove("open");
+      renderAll();
+    });
+
+    /* ---------- TASK MODAL HANDLERS ---------- */
+    const taskModal = document.getElementById("taskModal");
+    document.getElementById("openAddTaskBtn").addEventListener("click", () => {
+      document.getElementById("taskModalHeading").textContent = "Add Scheduled To-Do";
+      document.getElementById("editTaskId").value = "";
+      document.getElementById("taskTitleInput").value = "";
+      document.getElementById("taskDateInput").value = getDateKey();
+      document.getElementById("taskTimeInput").value = "09:00";
+      document.getElementById("taskDurationInput").value = "60";
+      document.getElementById("taskPriorityInput").value = "Normal";
+      document.getElementById("taskLocationInput").value = "";
+      document.getElementById("taskNotesInput").value = "";
+      taskModal.classList.add("open");
+    });
+
+    function openEditTaskModal(task) {
+      document.getElementById("taskModalHeading").textContent = "Edit Scheduled To-Do";
+      document.getElementById("editTaskId").value = task.id;
+      document.getElementById("taskTitleInput").value = task.title;
+      document.getElementById("taskDateInput").value = task.date || "";
+      document.getElementById("taskTimeInput").value = task.time || "";
+      document.getElementById("taskDurationInput").value = task.duration || 60;
+      document.getElementById("taskPriorityInput").value = task.priority || "Normal";
+      document.getElementById("taskLocationInput").value = task.location || "";
+      document.getElementById("taskNotesInput").value = task.notes || "";
+      taskModal.classList.add("open");
+    }
+
+    document.getElementById("closeTaskModalBtn").addEventListener("click", () => {
+      taskModal.classList.remove("open");
+    });
+
+    document.getElementById("saveTaskBtn").addEventListener("click", () => {
+      const title = document.getElementById("taskTitleInput").value.trim();
+      if (!title) return;
+      const date = document.getElementById("taskDateInput").value;
+      const time = document.getElementById("taskTimeInput").value;
+      const duration = parseInt(document.getElementById("taskDurationInput").value, 10) || 60;
+      const priority = document.getElementById("taskPriorityInput").value;
+      const location = document.getElementById("taskLocationInput").value.trim();
+      const notes = document.getElementById("taskNotesInput").value.trim();
+      const editId = document.getElementById("editTaskId").value;
+
+      if (editId) {
+        const target = state.tasks.find(t => t.id === editId);
+        if (target) {
+          Object.assign(target, { title, date, time, duration, priority, location, notes });
+        }
+      } else {
+        state.tasks.unshift({
+          id: "t_" + Date.now(),
+          title,
+          date,
+          time,
+          duration,
+          priority,
+          location,
+          notes,
+          done: false
+        });
+      }
+      saveState();
+      taskModal.classList.remove("open");
+      renderTasks();
+    });
+
+    /* ---------- FILTER & NAVIGATION HANDLERS ---------- */
+    document.querySelectorAll("#categoryFilters .chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#categoryFilters .chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeFilter = btn.dataset.cat;
+        renderAll();
+      });
+    });
+
+    document.querySelectorAll("#taskFilters .chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#taskFilters .chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeTaskFilter = btn.dataset.tfilter;
+        renderTasks();
+      });
+    });
+
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const target = btn.dataset.view;
+        document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+        document.getElementById(target).classList.add("active");
+      });
+    });
+
+    /* ---------- FOCUS TIMER ---------- */
+    let timerSeconds = 25 * 60;
+    let timerInterval = null;
+
+    function updateTimerDisplay() {
+      const m = String(Math.floor(timerSeconds / 60)).padStart(2, "0");
+      const s = String(timerSeconds % 60).padStart(2, "0");
+      document.getElementById("timerDisplay").textContent = `${m}:${s}`;
+    }
+
+    function playGong() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(528, ctx.currentTime);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.5);
+      } catch (e) {}
+    }
+
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        document.getElementById("timerStartBtn").textContent = "Start Session";
+        document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        timerSeconds = parseInt(btn.dataset.mins, 10) * 60;
+        updateTimerDisplay();
+      });
+    });
+
+    document.getElementById("timerStartBtn").addEventListener("click", () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        document.getElementById("timerStartBtn").textContent = "Resume";
+        return;
+      }
+      document.getElementById("timerStartBtn").textContent = "Pause";
+      timerInterval = setInterval(() => {
+        if (timerSeconds > 0) {
+          timerSeconds--;
+          updateTimerDisplay();
+        } else {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          document.getElementById("timerStartBtn").textContent = "Start Session";
+          playGong();
+        }
+      }, 1000);
+    });
+
+    document.getElementById("timerResetBtn").addEventListener("click", () => {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      document.getElementById("timerStartBtn").textContent = "Start Session";
+      const activePreset = document.querySelector(".preset-btn.active");
+      timerSeconds = (activePreset ? parseInt(activePreset.dataset.mins, 10) : 25) * 60;
+      updateTimerDisplay();
+    });
+
+    /* ---------- JSON EXPORT / IMPORT ---------- */
+    document.getElementById("exportJsonBtn").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `kaizen-bushido-backup-${getDateKey()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("importJsonInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          if (Array.isArray(imported.habits) && typeof imported.logs === "object") {
+            state = {
+              habits: imported.habits,
+              logs: imported.logs,
+              tasks: Array.isArray(imported.tasks) ? imported.tasks : []
+            };
+            saveState();
+            renderAll();
+          }
+        } catch (err) {}
+      };
+      reader.readAsText(file);
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
